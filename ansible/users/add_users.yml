@@ -1,0 +1,28 @@
+- name: Add users and Groups
+  hosts: stapp01
+  become: yes
+  tasks:
+  - name: Load user variable
+    include_vars: 
+      file: data/users.yml
+      name: users
+  - name: Creating Groups
+    group:
+      name: '{{ item.key }}'
+      state: present
+    loop: "{{ lookup('ansible.builtin.dict', users) }}"
+  - name: Creating Admins Group Users
+    user:
+      name: '{{ item }}'
+      password: "{{ 'BruCStnMT5' | password_hash('sha512') }}"
+      groups: admins,wheel
+      state: present
+    loop: '{{ users.admins }}'
+  - name: Creating Developers Group Users
+    user:
+      name: '{{ item }}'
+      password: "{{ 'ksH85UJjhb' | password_hash('sha512') }}"
+      group: developers
+      home: '/var/www/{{ item }}'
+      state: present
+    loop: '{{ users.developers}}'
