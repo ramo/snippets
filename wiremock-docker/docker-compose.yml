@@ -1,0 +1,14 @@
+version: '3.8'
+
+networks:
+  default:
+    name: wiremock
+    external: false
+
+services:
+  wiremock:
+    image: wiremock/wiremock
+    volumes:
+      - ./:/home/wiremock
+    expose:
+      - 8080
